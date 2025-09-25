@@ -35,7 +35,15 @@ func(r *RedisClient)SubscribeMessages(ctx context.Context,channel string)*redis.
 }
 
 
+func (r *RedisClient)SetUser(ctx context.Context,key string,members ...interface{}) error{
+	set:=r.client.SAdd(ctx,key,members...).Err()
+	return set
+}
 
+func (r *RedisClient)RemoveUser(ctx context.Context,key string,members ...interface{})error{
+	remove:=r.client.SRem(ctx,key,members...).Err()
+	return remove
+}
 
 
 
