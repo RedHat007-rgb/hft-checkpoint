@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { TickerModule } from './ticker/ticker.module';
 
 @Module({
-  imports: [],
+  imports: [TickerModule],
   controllers: [],
   providers: [],
 })
