@@ -26,9 +26,16 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.1.6",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-ws": "^11.1.6",
+    "@nestjs/websockets": "^11.1.6",
+    "@types/websocket": "^1.0.10",
+    "@types/ws": "^8.18.1",
+    "redis": "^5.8.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "ts-proto": "^2.7.7"
+    "ts-proto": "^2.7.7",
+    "websockets": "^0.2.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@bufbuild/protobuf": "^2.9.0",
@@ -40,6 +47,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
+    "@types/redis": "^4.0.11",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",

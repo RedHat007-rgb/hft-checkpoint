@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TickerController } from './ticker.controller';
+
 import { TickerService } from './ticker.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
@@ -18,7 +18,7 @@ import { join } from 'path';
       },
     ]),
   ],
-  controllers: [TickerController],
+
   providers: [TickerService],
 })
 export class TickerModule {}
