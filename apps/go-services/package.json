@@ -1,0 +1,9 @@
+{
+  "name": "go-services",
+  "scripts": {
+    "dev:ticker-service": "go build -o ./bin/ticker-service ./ticker-service/main.go && go run ./ticker-service/main.go",
+    "dev": " pnpm run dev:ticker-service",
+    "build:ticker-service": "go build -o ./bin/ticker-service ./ticker-service/main.go",
+    "build": " && pnpm run build:ticker-service "
+  }
+}
