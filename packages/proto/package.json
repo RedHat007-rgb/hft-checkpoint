@@ -1,0 +1,6 @@
+{
+  "name": "@repo/proto",
+  "scripts": {
+    "proto:gen": "protoc --go_out=./ --go-grpc_out=./ --proto_path=./ ticker.proto"
+  }
+}
