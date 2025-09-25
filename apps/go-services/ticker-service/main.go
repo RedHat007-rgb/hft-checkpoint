@@ -4,14 +4,33 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 
 	"github.com/RedHat007-rgb/hft-checkpoint/packages/golib/redis"
 	"github.com/RedHat007-rgb/hft-checkpoint/packages/golib/ws"
+	pb "github.com/RedHat007-rgb/hft-checkpoint/packages/proto/proto/ticker"
 	"github.com/gorilla/websocket"
+	"google.golang.org/grpc"
 )
 
-//websocket connection per each symbol
-//publish data
+
+type TickerServer struct{
+	pb.UnimplementedTickerServiceServer
+}
+
+func (s *TickerServer) Subscribe(ctx context.Context, req *pb.TickerRequest) (*pb.TickerAck, error) {
+    channel := "binance." + req.Symbol + ".ticker"
+    if err := redisClient.SetUser(ctx, channel, 1); err != nil {
+        log.Println("error while setting:", err)
+        return nil, err
+    }
+    return &pb.TickerAck{
+        Symbol: req.Symbol,
+    }, nil
+}
+
+
+var redisClient = redis.NewConnection()
 
 
 type WsConnections struct{
@@ -37,15 +56,19 @@ func BinanceWsConnections(tokens []string)[]*WsConnections{
 
 
 func main() {
+	lis,err:=net.Listen("tcp",":50051")
+	if err!=nil{
+		log.Println("error while creating a server %v",err)
+	}
+	grpc:=grpc.NewServer()
+
 	ctx := context.Background()
 	tokens := []string{"btcusdt", "solusdt", "ethusdt"}
-	redisClient := redis.NewConnection()
 	BinanceWsConnections(tokens)
 
 	for index := range binanceWsConns {
 		wsConn := binanceWsConns[index].conn
 		token := tokens[index]
-		// start a goroutine per websocket
 		go func(c *websocket.Conn, t string) {
 			defer c.Close()
 			channel := "binance." + t + ".ticker"
@@ -61,29 +84,11 @@ func main() {
 			}
 		}(wsConn, token)
 	}
-
-	// prevent main from exiting
-	select {}
+	
+	pb.RegisterTickerServiceServer(grpc, &TickerServer{})
+	log.Println("listeniong on port :50051")
+	grpc.Serve(lis)
 }
 
 
 
-// func main(){
-// 	ctx:=context.Background()
-// 	tokens:=[]string{"btcusdt","solusdt","ethusdt"}
-// 	redisClient:=redis.NewConnection()
-// 	BinanceWsConnections(tokens)
-// 	for index:=range binanceWsConns{
-// 		wsConn:=binanceWsConns[index].conn
-// 		defer wsConn.Close()
-// 		_,msg,err:=wsConn.ReadMessage()
-// 		if err!=nil{
-// 			log.Fatalf("error reading message with error %v",err)
-// 		}
-// 		channel:="binance."+tokens[index]+".ticker"
-// 		fmt.Println(channel)
-// 		if err:=redisClient.PublishMessages(ctx,channel,msg);err!=nil{
-// 			log.Println("error while publishing... %v",err)
-// 		}
-// 	}
-// }
